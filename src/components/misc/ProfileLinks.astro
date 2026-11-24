@@ -1,0 +1,79 @@
+---
+import { Icon } from "astro-icon/components";
+import { profileConfig } from "../../config";
+
+interface Props {
+	class?: string;
+}
+
+const className = Astro.props.class;
+
+const contacts: { name: string; icon: string; url?: string; copyValue?: string }[] =
+    profileConfig.links.map(item => ({
+        ...item,
+        copyValue: item.url.startsWith("mailto:") ? item.url.slice(7) : undefined,
+    }));
+
+if (profileConfig.qq) {
+    contacts.push({ name: "QQ", icon: "fa6-brands:qq", copyValue: profileConfig.qq });
+}
+---
+
+<div class:list={["flex flex-wrap gap-2 justify-center", className]}>
+    {contacts.map(item => item.copyValue ? (
+        <copy-contact data-value={item.copyValue} data-name={item.name}>
+            <button type="button" title={item.name === "Email" ? "Copy email address" : "Copy QQ number"}
+                    aria-label={item.name === "Email" ? "Copy email address" : "Copy QQ number"}
+                    class="btn-regular rounded-lg h-10 w-10 active:scale-95">
+                <span data-contact-icon aria-hidden="true"><Icon name={item.icon} class="text-[1.25rem]" /></span>
+                <span data-copy-success class="hidden" aria-hidden="true"><Icon name="material-symbols:check-rounded" class="text-[1.25rem]" /></span>
+            </button>
+            <span role="status" class="sr-only"></span>
+        </copy-contact>
+    ) : (
+        <a rel="me noopener noreferrer" aria-label={item.name} href={item.url}
+           title={item.name} target="_blank"
+           class="btn-regular rounded-lg h-10 w-10 active:scale-95">
+            <Icon name={item.icon} class="text-[1.25rem]" />
+        </a>
+    ))}
+</div>
+
+<script>
+    class CopyContact extends HTMLElement {
+        private resetTimer?: number;
+
+        constructor() {
+            super();
+            this.addEventListener("click", async (event) => {
+                if (!(event.target instanceof Element) || !event.target.closest("button")) return;
+                const value = this.dataset.value;
+                const icon = this.querySelector("[data-contact-icon]");
+                const success = this.querySelector("[data-copy-success]");
+                const status = this.querySelector("[role='status']");
+                if (!value || !icon || !success || !status) return;
+                try {
+                    await navigator.clipboard.writeText(value);
+                    icon.classList.add("hidden");
+                    success.classList.remove("hidden");
+                    status.textContent = `${this.dataset.name} copied.`;
+                    window.clearTimeout(this.resetTimer);
+                    this.resetTimer = window.setTimeout(() => {
+                        icon.classList.remove("hidden");
+                        success.classList.add("hidden");
+                    }, 2000);
+                } catch {
+                    status.textContent = "Automatic copying is unavailable.";
+                }
+            });
+        }
+
+        disconnectedCallback() {
+            window.clearTimeout(this.resetTimer);
+        }
+    }
+
+    if (!customElements.get("copy-contact")) {
+        customElements.define("copy-contact", CopyContact);
+    }
+</script>

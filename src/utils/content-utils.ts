@@ -1,4 +1,5 @@
 import { type CollectionEntry, getCollection } from "astro:content";
+import { categoryConfig } from "../config";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils.ts";
@@ -82,7 +83,11 @@ export async function getCategoryList(): Promise<Category[]> {
 	const allBlogPosts = await getCollection<"posts">("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
-	const count: { [key: string]: number } = {};
+	const count: { [key: string]: number } = Object.create(null);
+	for (const name of categoryConfig.names) {
+		const categoryName = name.trim();
+		if (categoryName) count[categoryName] = 0;
+	}
 	allBlogPosts.forEach((post: { data: { category: string | null } }) => {
 		if (!post.data.category) {
 			const ucKey = i18n(I18nKey.uncategorized);

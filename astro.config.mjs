@@ -26,7 +26,8 @@ import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-cop
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://fuwari.vercel.app/",
+	site: process.env.SITE_URL || "https://xsher7.github.io/",
+	devToolbar: { enabled: false },
 	base: "/",
 	trailingSlash: "always",
 	integrations: [
@@ -38,7 +39,7 @@ export default defineConfig({
 			animationClass: "transition-swup-", // see https://swup.js.org/options/#animationselector
 			// the default value `transition-` cause transition delay
 			// when the Tailwind class `transition-all` is used
-			containers: ["main", "#toc"],
+			containers: ["#main-grid", "#toc"],
 			smoothScrolling: true,
 			cache: true,
 			preload: true,

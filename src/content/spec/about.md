@@ -1,7 +1,8 @@
 # About
-This is the demo site for [Fuwari](https://github.com/saicaca/fuwari).
 
-::github{repo="saicaca/fuwari"}
+Hi, I'm xsher.
+
+This is where I share my notes, projects, and occasional thoughts.
 
 > ### Sources of images used in this site
 > - [Unsplash](https://unsplash.com/)

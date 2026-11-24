@@ -60,10 +60,16 @@ export type NavBarConfig = {
 	links: (NavBarLink | LinkPreset)[];
 };
 
+export type CategoryConfig = {
+	names: string[];
+};
+
 export type ProfileConfig = {
 	avatar?: string;
 	name: string;
 	bio?: string;
+	tags?: string[];
+	qq?: string;
 	links: {
 		name: string;
 		url: string;

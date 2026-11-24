@@ -3,10 +3,10 @@ import { onMount } from "svelte";
 
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import { getPostUrlBySlug } from "../utils/url-utils";
+import { getPostUrlBySlug, url } from "../utils/url-utils";
 
-export let tags: string[];
-export let categories: string[];
+export let tags: string[] = [];
+export let categories: string[] = [];
 export let sortedPosts: Post[] = [];
 
 const params = new URLSearchParams(window.location.search);
@@ -19,7 +19,7 @@ interface Post {
 	data: {
 		title: string;
 		tags: string[];
-		category?: string;
+		category?: string | null;
 		published: Date;
 	};
 }
@@ -30,6 +30,7 @@ interface Group {
 }
 
 let groups: Group[] = [];
+let ready = false;
 
 function formatDate(date: Date) {
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -82,10 +83,24 @@ onMount(async () => {
 	groupedPostsArray.sort((a, b) => b.year - a.year);
 
 	groups = groupedPostsArray;
+	ready = true;
 });
 </script>
 
 <div class="card-base px-8 py-6">
+    {#if ready && groups.length === 0}
+        <div class="py-8 text-center">
+            <h1 class="text-xl font-bold text-75">No posts yet</h1>
+            <p class="mt-2 text-50">
+                {categories.length > 0
+                    ? `Posts in ${categories.join(", ")} will appear here.`
+                    : "Published posts will appear here."}
+            </p>
+            <a href={url("/archive/")} class="btn-regular inline-flex rounded-lg px-4 py-2 mt-5">
+                View all posts
+            </a>
+        </div>
+    {/if}
     {#each groups as group}
         <div>
             <div class="flex flex-row w-full items-center h-[3.75rem]">

@@ -1,0 +1,37 @@
+---
+import { url } from "../../utils/url-utils";
+---
+
+<back-to-previous-page class="flex mb-4 px-4 md:px-0">
+    <a href={url("/archive/")} data-no-swup title="Back to previous page"
+       class="btn-regular rounded-lg h-10 px-4 text-sm font-medium active:scale-95">
+        Back
+    </a>
+</back-to-previous-page>
+
+<script>
+    class BackToPreviousPage extends HTMLElement {
+        constructor() {
+            super();
+            this.addEventListener("click", (event) => {
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                if (!(event.target instanceof Element) || !event.target.closest("a")) return;
+
+                // Swup indexes the initial page as 1 and increments on each new history entry.
+                const state = window.history.state;
+                const hasSiteHistory = state?.source === "swup" && state.index > 1;
+                const hasLocalReferrer = document.referrer !== "" &&
+                    new URL(document.referrer).origin === window.location.origin;
+
+                if (window.history.length > 1 && (hasSiteHistory || hasLocalReferrer)) {
+                    event.preventDefault();
+                    window.history.back();
+                }
+            });
+        }
+    }
+
+    if (!customElements.get("back-to-previous-page")) {
+        customElements.define("back-to-previous-page", BackToPreviousPage);
+    }
+</script>
