@@ -9,6 +9,10 @@ let delay = 0;
 const interval = 50;
 ---
 <div class="transition flex flex-col rounded-[var(--radius-large)] bg-[var(--card-bg)] py-1 md:py-0 md:bg-transparent md:gap-4 mb-4">
+    {page.data.length === 0 && <div class="card-base px-8 py-14 text-center">
+        <h1 class="text-xl font-bold text-75">No posts yet</h1>
+        <p class="mt-2 text-50">New projects, notes, and updates will appear here.</p>
+    </div>}
     {page.data.map((entry: CollectionEntry<"posts">) => (
         <PostCard
                 entry={entry}

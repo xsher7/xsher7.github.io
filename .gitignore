@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# Local writing examples; never publish or upload these backups.
+/local-reference/
+
 # generated types
 .astro/
 
